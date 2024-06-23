@@ -1,0 +1,461 @@
+1. Oracle DB와 JSP 연동 // custom_01.jsp
+
+<%@ page import="java.sql.Connection, java.sql.DriverManager, java.sql.PreparedStatement, java.sql.ResultSet" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>회원목록조회</title>
+    <style>
+        table { 
+        	width: 100%; 
+        	border-collapse: collapse; 
+        }
+        table, th, td { 
+        	border: 1px solid black; 
+        }
+        th, td { 
+        	padding: 8px; 
+        	text-align: left; 
+		}
+        th { 
+        	background-color: #f2f2f2; 
+        }
+        caption { 
+        	font-size: 1.5em; 
+        	margin: 10px 0; 
+        }
+    </style>
+</head>
+
+<body>
+    <h2 style="text-align:center">회원목록조회</h2>
+    <hr>
+    <table>
+        <tr>
+            <th>회원아이디</th>
+            <th>회원이름</th>
+            <th>이메일</th>
+            <th>연락처</th>
+        </tr>
+        <%
+            String driver = "oracle.jdbc.driver.OracleDriver";
+            String url = "jdbc:oracle:thin:@localhost:1521:XE";
+            String user = "scott";
+            String password = "tiger";
+
+            Connection conn = null;
+            PreparedStatement pstmt = null;
+            ResultSet rs = null;
+
+            try {
+                Class.forName(driver);
+                conn = DriverManager.getConnection(url, user, password);
+
+                String sql = "SELECT p_id, c_name, c_email, c_tel FROM custom_01";
+                pstmt = conn.prepareStatement(sql);
+                rs = pstmt.executeQuery();
+
+                while (rs.next()) {
+                    String id = rs.getString("p_id");
+                    String name = rs.getString("c_name");
+                    String email = rs.getString("c_email");
+                    String phone = rs.getString("c_tel");
+
+                    out.println("<tr>");
+                    out.println("<td>" + id + "</td>");
+                    out.println("<td>" + name + "</td>");
+                    out.println("<td>" + email + "</td>");
+                    out.println("<td>" + phone + "</td>");
+                    out.println("</tr>");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (rs != null) try { rs.close(); } catch (Exception e) {}
+                if (pstmt != null) try { pstmt.close(); } catch (Exception e) {}
+                if (conn != null) try { conn.close(); } catch (Exception e) {}
+            }
+        %>
+    </table>
+    <hr>
+    <p>HRDKOREA Copyright©2015 All rights reserved. Human Resources Development Service of Korea</p>
+</body>
+</html>
+
+2. 페이지 연동 // member_insert.jsp 얘 실행시키기!
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+    
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회원 등록</title>
+</head>
+
+<body>
+<form>
+	<h1>회원 등록</h1>
+	<table border="1">
+ 	<tr>
+ 		<td>아이디</td>
+ 		<td><input type="text" name="id"></td>
+ 	</tr>
+ 
+ 	<tr>
+ 		<td>비밀번호</td>
+ 		<td><input type="text" name="pwd"></td>
+ 	</tr>
+ 
+ 	<tr>
+    		<td>성명</td>
+    		<td><input type="text" name="name"></td>
+ 	</tr>
+ 
+ 	<tr>
+    		<td>이메일</td>
+    		<td><input type="text" name="email"></td>
+ 	</tr>
+ 
+ 	<tr>
+    		<td>연락처</td>
+    		<td><input type="text" name="phone"></td>
+ 	</tr>
+ 
+  	<tr>
+    	<td colspan="2">
+    		<button type="submit" formaction="register.jsp"> 등록 </button> 
+    		<button type="submit" formaction="custom_01.jsp"> 조회 </button>
+    	</td>
+ 	</tr>
+	</table>
+</form>
+</body>
+</html>
+
+3. 데이터 입력해 Oracle DB에 반영 // register.jsp
+
+<%@ page import="java.sql.*" %>
+<%@ page import="hello1.*" %>
+<%@ page import="jakarta.servlet.http.HttpServletRequest" %>
+<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>회원등록</title>
+</head>
+
+<body>
+<%
+	try {
+    	RegisterUser registUser = new RegisterUser(request);
+
+    	if (registUser.insertUser()) {
+        	out.println("<p>회원이 성공적으로 등록되었습니다.</p>");
+    		} else {
+        		out.println("<p>회원 등록 중 오류가 발생했습니다.</p>");
+    			}
+			} catch (Exception e) {
+    			e.printStackTrace();
+		}
+%>
+
+<form action="member_insert.jsp" method="get">
+    <input type="submit" value="뒤로가기">
+</form>
+
+</body>
+</html>
+
+3-1. // RegisterUser.java <- src<main<java<패키지명 아래 클래스 생성
+package hello1;
+
+import jakarta.servlet.http.HttpServletRequest;
+import java.sql.*;
+
+public class RegisterUser {
+    private String id;
+    private String pwd;
+    private String c_name;
+    private String c_email;
+    private String c_tel;
+
+    public RegisterUser(HttpServletRequest request) {
+        this.id = request.getParameter("id");
+        this.pwd = request.getParameter("pwd");
+        this.c_name = request.getParameter("name");
+        this.c_email = request.getParameter("email");
+        this.c_tel = request.getParameter("phone");
+    }
+
+    public boolean insertUser() {
+        String driver = "oracle.jdbc.driver.OracleDriver";
+        String url = "jdbc:oracle:thin:@localhost:1521:XE";
+        String user = "scott";
+        String password = "tiger";
+
+        Connection conn = null;
+        PreparedStatement pstmt = null;
+        boolean isInserted = false;
+
+        try {
+            Class.forName(driver);
+            conn = DriverManager.getConnection(url, user, password);
+
+            String sql = "INSERT INTO custom_01 (p_id, p_pw, c_name, c_email, c_tel) VALUES (?, ?, ?, ?, ?)";
+            pstmt = conn.prepareStatement(sql);
+
+            pstmt.setString(1, this.id);
+            pstmt.setString(2, this.pwd);
+            pstmt.setString(3, this.c_name);
+            pstmt.setString(4, this.c_email);
+            pstmt.setString(5, this.c_tel);
+
+            int rows = pstmt.executeUpdate();
+            if (rows > 0) {
+                isInserted = true;
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (pstmt != null) pstmt.close();
+                if (conn != null) conn.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        return isInserted;
+    }
+}
+
+4. 데이터 입력 // input0525.html 얘 실행시켜라!
+
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+    }
+    .container {
+        display: inline-block;
+        padding: 20px;
+    }
+    table {
+        margin: 0 auto;
+        border-collapse: collapse;
+        width: 300px;
+    }
+    td, th {
+        border: 1px solid #000;
+        padding: 10px;
+        text-align: center;
+    }
+</style>
+<body>
+<div class="container">
+    <br><h2>제조사명 조회</h2>
+    <form action="result.jsp" method="post">
+    <table border="1">
+        <tr>
+            <th colspan="2">제품코드(4) 입력</th>
+        </tr>
+        <tr>
+            <td>제품코드</td>
+            <td><input type="text" id="productCode" name="productCode" maxlength="4" required></td>
+        </tr>
+        <tr>
+            <td colspan="2"><input type="submit" value="확인"></td>
+        </tr>
+    </table>
+    </form>
+</div>
+</body>
+</html>
+
+5-1. 입력한 데이터 조회 기반 결과 // result.jsp
+
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8" import="hello.*"%> 
+
+<%
+    UserInfo user = new UserInfo("한국인", "1004", "2019-10-31");
+    ProductInfo product = new ProductInfo();
+    
+    String code = request.getParameter("productCode");
+
+    product.setCode(code);
+    product.find(); 
+%>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>제품코드 조회 결과</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        .container {
+            display: inline-block;
+            padding: 20px;
+        }
+        table {
+            margin: 30px auto;
+            border-collapse: collapse;
+            width: 500px;
+        }
+        td {
+            border: 1px solid #000;
+            width:100px;
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            border: 1px solid #000;
+            width:500px;
+            padding: 10px;
+            text-align: center;
+        }
+        .footer {
+            margin-top: 20px;
+            font-size: 0.9em;
+        }
+        .borderTop {
+            width: 500px;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <h1>제품코드 조회결과</h1>
+    <hr>
+    <table border="1">
+        <tr>
+            <td colspan="2">제조사 조회 결과</td>
+        </tr>
+        <tr>
+            <td>제품코드</td>
+            <td><%= product.getCode() %></td>
+        </tr>
+        <tr>
+            <td>제조사명</td>
+            <td><%= product.getVendor() %></td>
+        </tr>
+        <tr>
+            <td>조회일시</td>
+            <td><%= new java.text.SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(product.getDate()) %></td>
+        </tr>
+    </table>
+    <hr>
+    <div>
+        작성자: <%= user.getName() %> 비번: <%= user.getCode() %> 작성일: <%= user.getDate() %>
+    </div>
+</body>
+</html>
+
+7. // ProductInfo.java
+
+package hello;
+
+import java.util.Date;
+import java.util.HashMap;
+
+public class ProductInfo {
+    private String code;
+    private String vendor;
+    private Date date;
+
+    public String getCode() {
+        return code;
+    }
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getVendor() {
+        return vendor;
+    }
+    public void setVendor(String vendor) {
+        this.vendor = vendor;
+    }
+
+    public Date getDate() {
+        return date;
+    }
+    public void setDate(Date date) {
+        this.date = date;
+    }
+
+    public void find() {
+        HashMap<String, String> map = new HashMap<>();
+
+        map.put("A100", "삼성전자");
+        map.put("A200", "LG전자");
+        map.put("A300", "하이닉스");
+
+        vendor = map.get(code);
+        if (vendor == null) {
+            vendor = "등록되지 않은 제품입니다!";
+        }
+
+        date = new Date(); 
+	}
+}
+
+8. // UserInfo.java
+
+package hello;
+
+public class UserInfo {
+	private String name;
+	private String code;
+	private String date;
+
+    public UserInfo(String name, String code, String date) {
+        this.name = name;
+        this.code = code;
+        this.date = date;
+    }
+    
+	public String getName() {
+		return name;
+	}
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public String getCode() {
+		return code;
+	}
+	public void setCode(String code) {
+		this.code = code;
+	}
+	
+	public String getDate() {
+		return date;
+	}
+	public void setDate(String date) {
+		this.date = date;
+	}
+	
+}
+

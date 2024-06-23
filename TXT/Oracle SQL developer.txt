@@ -1,0 +1,38 @@
+1. SQL DEVELOPER
+DB - 사용자이름 scott 비번 tiger
+
+C:\Windows\System32>sqlplus
+Enter user-name: system
+Enter password: 1234
+SQL>show user;
+SQL>select * from tab;
+SQL> exit
+
+SQL> alter user scott
+  2  identified by tiger
+  3  account unlock;
+
+SQL> create user scott identified by tiger
+  2  default tablespace users
+  3  temporary tablespace temp;
+
+SQL> alter user scott
+  2  identified by tiger
+  3  account unlock;
+
+SQL> grant create session to scott;
+
+SQL> exit
+
+C:\Windows\System32>sqlplus scott/tiger 완성~
+
+2. 테이블 생성하기
+SQL> grant unlimited tablespace to scott;
+
+# 예제 테이블
+create table naon(
+    id number(4),
+    user_name varchar(255)
+    );
+
+SQL> grant create table to scott; 실행 후 테이블 생성 -> 완료
