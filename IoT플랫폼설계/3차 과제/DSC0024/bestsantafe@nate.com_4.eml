@@ -1,0 +1,48 @@
+X-NATE-RCPTTO: bestsantafe@nate.com
+Received: from external ([209.85.160.52])
+	by mailrx38 (1.0) id p5A6oST00BAB;
+	Fri, 10 Jun 2011 15:50:28 +0900
+X-SmartFilter: UNIQ,543729A93D6C70537F827E007E772E3F,p5A6oST00BAB
+X-NATE-SPF: Pass
+X-SmartFilter: FROM,p5A6oST00BAB,jseon4@gmail.com
+X-SmartFilter: HELO,p5A6oST00BAB,mail-pw0-f52.google.com
+Received: by mail-pw0-f52.google.com with SMTP id 4so1437876pwi.11
+        for <bestsantafe@nate.com>; Thu, 09 Jun 2011 23:50:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=gamma;
+        h=domainkey-signature:mime-version:date:message-id:subject:from:to
+         :content-type;
+        bh=HlQQ7mMGGwH9YC5L7ygm4oZaVo+bKTbFnkY0LVTCHhM=;
+        b=DN3b2EoupqzS3CFuQChIhyyub4eJkv4iFrsKh+EG3FJLLxN7vaaAVClycnk4HMjX/S
+         18xLpLGi40AQvET+k6K97q5UrAzgg2cXvZmBfbet0PpRo0kEbgKgq00N0SpCCd6cdbgL
+         4PpqHWQ0X6UF9QsKHXDhqSANpb2NUKD4CMrhE=
+DomainKey-Signature: a=rsa-sha1; c=nofws;
+        d=gmail.com; s=gamma;
+        h=mime-version:date:message-id:subject:from:to:content-type;
+        b=OsYoKjzjq+Rj0xiqhCeMB1DAT26Tv+MCCeTBa8nv8nbsxYVgN7OIVR1Vpu8SotmbnI
+         pxmb9L7V5Ur2PrlT2whg5CX79aGpAXIX6QbFdd3rrPm9VnGPcQ6ty0ZmbibqQcco2s47
+         hjm0zMzZxIhTVJHAQFGwuPxISWvQAKj6WKgek=
+MIME-Version: 1.0
+Received: by 10.142.188.2 with SMTP id l2mr276411wff.261.1307688628029; Thu,
+ 09 Jun 2011 23:50:28 -0700 (PDT)
+Received: by 10.142.134.2 with HTTP; Thu, 9 Jun 2011 23:50:27 -0700 (PDT)
+Date: Fri, 10 Jun 2011 15:50:27 +0900
+Message-ID: <BANLkTim+28ASdxJS6JSe4-29m92-8MLHCQ@mail.gmail.com>
+Subject: =?EUC-KR?B?wNq34SDDs7iuILDH?=
+From: Jaehyun Seon <jseon4@gmail.com>
+To: bestsantafe@nate.com
+Content-Type: multipart/alternative; boundary=000e0cd2da082687d604a555fccc
+
+--000e0cd2da082687d604a555fccc
+Content-Type: text/plain; charset=EUC-KR
+Content-Transfer-Encoding: base64
+
+vsiz58fPvcq0z7HuLgoKseLBuL+hILrOxbkgteW3yLT4IMDat+Egw7O4rrDHv6EgtOvH2LytILDm
+sPogvsizuyC6zsW5ILXluLO0z7TZLgoKCrCou+fH1bTPtNkuCg==
+--000e0cd2da082687d604a555fccc
+Content-Type: text/html; charset=EUC-KR
+Content-Transfer-Encoding: base64
+
+vsiz58fPvcq0z7HuLjxicj48YnI+seLBuL+hILrOxbkgteW3yLT4IMDat+Egw7O4rrDHv6EgtOvH
+2LytILDmsPogvsizuyC6zsW5ILXluLO0z7TZLjxicj48YnI+PGJyPrCou+fH1bTPtNkuPGJyPgo=
+--000e0cd2da082687d604a555fccc--
